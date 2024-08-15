@@ -18,3 +18,10 @@ def predict_crops(soil_data):
     sample = model.predict(data_preprocessing(soil_data))
     crops = cluster_data.loc[cluster_data['cluster'] == sample[0], 'label'].values
     return set(crops)
+
+
+
+# Example usage
+soil_data = [16, 75, 21, 18, 23, 5, 87]  # Example input
+recommended_crops = predict_crops(soil_data)
+print("Recommended crops in order of preference:", recommended_crops)
