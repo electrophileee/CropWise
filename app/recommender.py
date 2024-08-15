@@ -15,9 +15,24 @@ def data_preprocessing(data):
 
 
 def predict_crops(soil_data):
-    sample = model.predict(data_preprocessing(soil_data))
-    crops = cluster_data.loc[cluster_data['cluster'] == sample[0], 'label'].values
-    return set(crops)
+    """Predict crops and order them based on cluster probabilities."""
+    # Get probability distribution across clusters
+    probabilities = model.predict_proba(data_preprocessing(soil_data))[0]
+    
+    # Predict the most likely cluster for the given soil data
+    predicted_cluster = model.predict(data_preprocessing(soil_data))[0]
+    
+    # Fetch crops corresponding to the predicted cluster
+    crops = cluster_data.loc[cluster_data['cluster'] == predicted_cluster, 'label'].values
+    
+    # Remove duplicates while preserving order
+    unique_crops = list(dict.fromkeys(crops))
+    
+    # Sort the unique crops based on the probability of their cluster
+    ordered_crops = sorted(unique_crops, key=lambda crop: probabilities[predicted_cluster], reverse=True)
+    
+    # Return the list of unique crops from the predicted cluster, ordered by cluster probability
+    return ordered_crops
 
 
 
